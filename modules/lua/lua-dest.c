@@ -307,7 +307,12 @@ lua_dd_init(LogPipe *s)
   if (self->globals)
     {
       lua_dd_inject_all_global_variables(self->state, self->globals);
-      g_list_free_full(self->globals, lua_global_constant_free);
+      // g_list_free_full(self->globals, lua_global_constant_free);
+      while (self->globals)
+        {
+          lua_global_constant_free ((LogMessage *)self->globals->data);
+          self->globals = g_list_delete_link (self->globals, self->globals);
+        }
       self->globals = NULL;
     }
 
@@ -456,7 +461,12 @@ lua_dd_init_global_contants(LogDriver *d)
   LuaDestDriver *self = (LuaDestDriver *)d;
   
   if (self->globals)
-    g_list_free_full(self->globals, lua_global_constant_free);
+    // g_list_free_full(self->globals, lua_global_constant_free);
+    while (self->globals)
+      {
+        lua_global_constant_free ((LogMessage *)self->globals->data);
+        self->globals = g_list_delete_link (self->globals, self->globals);
+      }
 
   self->globals = NULL;
 };
